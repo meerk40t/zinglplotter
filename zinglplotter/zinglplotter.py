@@ -46,6 +46,13 @@ class ZinglPlotter:
                                                       seg.control[0], seg.control[1],
                                                       seg.end[0], seg.end[1]):
                 yield x, y, 1
+
+        elif isinstance(seg, CubicBezier):
+            for e in ZinglPlotter.plot_cubic_bezier(seg.start[0], seg.start[1],
+                                                   seg.control1[0], seg.control1[1],
+                                                   seg.control2[0], seg.control2[1],
+                                                   seg.end[0], seg.end[1]):
+                yield e
         elif isinstance(seg, Arc):
             for x, y in ZinglPlotter.plot_arc(seg):
                 yield x, y, 1
