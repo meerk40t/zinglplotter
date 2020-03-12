@@ -34,21 +34,23 @@ class ZinglPlotter:
             if seg.start is not None:
                 for x, y in ZinglPlotter.plot_line(seg.start[0], seg.start[1], seg.end[0], seg.end[1]):
                     yield x, y, 0
-        if isinstance(seg, Close):
+        elif isinstance(seg, Close):
             if seg.start is not None and seg.end is not None:
                 for x, y in ZinglPlotter.plot_line(seg.start[0], seg.start[1], seg.end[0], seg.end[1]):
                     yield x, y, 1
-        if isinstance(seg, Line):
+        elif isinstance(seg, Line):
             for x, y in ZinglPlotter.plot_line(seg.start[0], seg.start[1], seg.end[0], seg.end[1]):
                 yield x, y, 1
-        if isinstance(seg, QuadraticBezier):
+        elif isinstance(seg, QuadraticBezier):
             for x, y in ZinglPlotter.plot_quad_bezier(seg.start[0], seg.start[1],
                                                       seg.control[0], seg.control[1],
                                                       seg.end[0], seg.end[1]):
                 yield x, y, 1
-        if isinstance(seg, Arc):
+        elif isinstance(seg, Arc):
             for x, y in ZinglPlotter.plot_arc(seg):
                 yield x, y, 1
+        else:
+            raise ValueError
 
     @staticmethod
     def plot_arc(arc):
