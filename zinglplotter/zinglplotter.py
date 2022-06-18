@@ -481,3 +481,38 @@ def draw_line_aa(self, x0, y0, x1, y1):
             err += dx
             y0 += sy
 
+
+def plot_line_width(plot, x0: int, y0: int, x1: int, y1: int, wd: float):
+    dx = abs(x1-x0)
+    sx = 1 if x0 < x1 else -1
+    dy = abs(y1-y0)
+    sy = 1 if y0 < y1 else -1
+    err = dx - dy                          #/* error value e_xy */
+    ed = 1 if dx+dy == 0 else abs(complex(dx, dy))
+    wd = (wd + 1) / 2
+    while True:                                   #/* pixel loop */
+        plot(x0, y0, max(0, int(255*(abs(err-dx+dy)/ed-wd+1))))
+        e2 = err
+        x2 = x0
+        if 2*e2 >= -dx:                                           #/* x step */
+            e2 += dy
+            y2 = y0
+            while e2 < ed*wd and (y1 != y2 or dx > dy):
+                y2 += sy  # might be after plot line.
+                plot(x0, y2, max(0, int(255*(abs(e2)/ed-wd+1))))
+                e2 += dx
+            if x0 == x1:
+                break
+            e2 = err
+            err -= dy
+            x0 += sx
+        if 2*e2 <= dy:                                            #/* y step */
+            e2 = dx - e2
+            while e2 < ed * wd and (x1 != x2 or dx < dy):
+                x2 += sx  # might be after plot line
+                plot(x2, y0, max(0, int(255*(abs(e2)/ed-wd+1))))
+                e2 += dy
+            if y0 == y1:
+                break
+            err += dx
+            y0 += sy
