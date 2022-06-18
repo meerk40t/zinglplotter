@@ -498,8 +498,8 @@ def plot_line_width(x0: int, y0: int, x1: int, y1: int, wd: float):
             e2 += dy
             y2 = y0
             while e2 < ed*wd and (y1 != y2 or dx > dy):
-                y2 += sy  # might be after plot line.
                 yield x0, y2, max(0, int(255*(abs(e2)/ed-wd+1)))
+                y2 += sy
                 e2 += dx
             if x0 == x1:
                 break
@@ -509,8 +509,8 @@ def plot_line_width(x0: int, y0: int, x1: int, y1: int, wd: float):
         if 2*e2 <= dy:                                            #/* y step */
             e2 = dx - e2
             while e2 < ed * wd and (x1 != x2 or dx < dy):
-                x2 += sx  # might be after plot line
                 yield x2, y0, max(0, int(255*(abs(e2)/ed-wd+1)))
+                x2 += sx
                 e2 += dy
             if y0 == y1:
                 break
