@@ -452,3 +452,32 @@ def plot_cubic_bezier(x0, y0, x1, y1, x2, y2, x3, y3):
         fx0 = fx3
         fy0 = fy3
         t1 = t2
+
+
+def draw_line_aa(self, x0, y0, x1, y1):
+    dx = abs(x1-x0)
+    sx = 1 if x0 < x1 else -1
+    dy = abs(y1-y0)
+    sy = 1 if y0 < y1 else -1
+    err = dx-dy
+    ed = 1 if dx + dy == 0 else abs(complex(dx, dy))
+
+    while True:                                         #/* pixel loop */
+        self.plot(x0, y0, a=255*abs(err-dx+dy)/ed)
+        e2 = err
+        x2 = x0
+        if 2*e2 >= -dx:                                    #/* x step */
+            if x0 == x1:
+                break
+            if e2+dy < ed:
+                self.plot(x0, y0+sy, a=255*(e2+dy)/ed)
+            err -= dy
+            x0 += sx
+        if 2*e2 <= dy:                                     #/* y step */
+            if y0 == y1:
+                break
+            if dx-e2 < ed:
+                self.plot(x2+sx, y0, a=255*(dx-e2)/ed)
+            err += dx
+            y0 += sy
+
