@@ -14,7 +14,8 @@ This library is a series of plot line generators converted from C++.
 * plot_quad_bezier(x0, y0, x1, y1, x2, y2)
 * plot_cubic_bezier_seg(x0, y0, x1, y1, x2, y2, x3, y3)
 * plot_cubic_bezier(x0, y0, x1, y1, x2, y2, x3, y3)
-* draw_line_aa(x0, y0, x1, y1)
+* plot_line_aa(x0, y0, x1, y1)
+* plot_line_width(x0: int, y0: int, x1: int, y1: int, wd: float)
 
 These do Zingl-Bresenham algorithms for line, quad, cubic. The `_seg` function perform the draw but only for rational segments (no inversion points). The `_aa` function performs the same thing but in an anti-alias manner.
 

@@ -1,4 +1,3 @@
-
 """
 The Zingl-Bresenham plotting algorithms are from Alois Zingl's "The Beauty of Bresenham's Algorithm"
 ( http://members.chello.at/easyfilter/bresenham.html ).
@@ -63,7 +62,7 @@ def plot_quad_bezier_seg(x0, y0, x1, y1, x2, y2):
     cur = xx * sy - yy * sx  # /* curvature */
     points = None
 
-    assert (xx * sx <= 0 and yy * sy <= 0)  # /* sign of gradient must not change */
+    assert xx * sx <= 0 and yy * sy <= 0  # /* sign of gradient must not change */
 
     if sx * sx + sy * sy > xx * xx + yy * yy:  # /* begin with shorter part */
         x2 = x0
@@ -127,7 +126,9 @@ def plot_quad_bezier_seg(x0, y0, x1, y1, x2, y2):
         if points is None:
             yield plot  # /* plot curve */
         else:
-            points.append(plot)  # plotLine(x0,y0, x2,y2) #/* plot remaining part to end */
+            # plotLine(x0,y0, x2,y2)
+            # #/* plot remaining part to end */
+            points.append(plot)
     if points is not None:
         for plot in reversed(points):
             yield plot
@@ -199,7 +200,8 @@ def plot_quad_bezier(x0, y0, x1, y1, x2, y2):
 def plot_cubic_bezier_seg(x0, y0, x1, y1, x2, y2, x3, y3):
     """plot limited cubic Bezier segment
     This algorithm can plot curves that do not inflect.
-    It is used as part of the general algorithm, which breaks at the infection point(s)"""
+    It is used as part of the general algorithm, which breaks at the infection point(s)
+    """
     second_leg = []
     f = 0
     fx = 0
@@ -252,7 +254,8 @@ def plot_cubic_bezier_seg(x0, y0, x1, y1, x2, y2, x3, y3):
         ab = xa * yb - xb * ya
         ac = xa * yc - xc * ya
         bc = xb * yc - xc * yb
-        ex = ab * (ab + ac - 3 * bc) + ac * ac  # /* P0 part of self-intersection loop? */
+        # /* P0 part of self-intersection loop? */
+        ex = ab * (ab + ac - 3 * bc) + ac * ac
         if ex > 0:
             f = 1  # /* calc resolution */
         else:
@@ -263,11 +266,29 @@ def plot_cubic_bezier_seg(x0, y0, x1, y1, x2, y2, x3, y3):
         ex *= f * f  # /* increase resolution */
         xy = 9 * (ab + ac + bc) / 8
         cb = 8 * (xa - ya)  # /* init differences of 1st degree */
-        dx = 27 * (8 * ab * (yb * yb - ya * yc) + ex * (ya + 2 * yb + yc)) / 64 - ya * ya * (xy - ya)
-        dy = 27 * (8 * ab * (xb * xb - xa * xc) - ex * (xa + 2 * xb + xc)) / 64 - xa * xa * (xy + xa)
+        dx = 27 * (
+            8 * ab * (yb * yb - ya * yc) + ex * (ya + 2 * yb + yc)
+        ) / 64 - ya * ya * (xy - ya)
+        dy = 27 * (
+            8 * ab * (xb * xb - xa * xc) - ex * (xa + 2 * xb + xc)
+        ) / 64 - xa * xa * (xy + xa)
         # /* init differences of 2nd degree */
-        xx = 3 * (3 * ab * (3 * yb * yb - ya * ya - 2 * ya * yc) - ya * (3 * ac * (ya + yb) + ya * cb)) / 4
-        yy = 3 * (3 * ab * (3 * xb * xb - xa * xa - 2 * xa * xc) - xa * (3 * ac * (xa + xb) + xa * cb)) / 4
+        xx = (
+            3
+            * (
+                3 * ab * (3 * yb * yb - ya * ya - 2 * ya * yc)
+                - ya * (3 * ac * (ya + yb) + ya * cb)
+            )
+            / 4
+        )
+        yy = (
+            3
+            * (
+                3 * ab * (3 * xb * xb - xa * xa - 2 * xa * xc)
+                - xa * (3 * ac * (xa + xb) + xa * cb)
+            )
+            / 4
+        )
         xy = xa * ya * (6 * ab + 6 * ac - 3 * bc + cb)
         ac = ya * ya
         cb = xa * xa
@@ -348,7 +369,8 @@ def plot_cubic_bezier_seg(x0, y0, x1, y1, x2, y2, x3, y3):
         if not (leg != 0):
             break
         leg -= 1  # /* try other end */
-    for plot in plot_line(x3, y3, x0, y0):  # /* remaining part in case of cusp or crunode */
+    for plot in plot_line(x3, y3, x0, y0):
+        # /* remaining part in case of cusp or crunode */
         second_leg.append(plot)
     for plot in reversed(second_leg):
         yield plot
@@ -426,10 +448,18 @@ def plot_cubic_bezier(x0, y0, x1, y1, x2, y2, x3, y3):
     t[n] = 1.0  # /* begin / end point */
     for i in range(0, n + 1):  # /* plot each segment separately */
         t2 = t[i]  # /* sub-divide at t[i-1], t[i] */
-        fx1 = (t1 * (t1 * xb - 2 * xc) - t2 * (t1 * (t1 * xa - 2 * xb) + xc) + xd) / 8 - fx0
-        fy1 = (t1 * (t1 * yb - 2 * yc) - t2 * (t1 * (t1 * ya - 2 * yb) + yc) + yd) / 8 - fy0
-        fx2 = (t2 * (t2 * xb - 2 * xc) - t1 * (t2 * (t2 * xa - 2 * xb) + xc) + xd) / 8 - fx0
-        fy2 = (t2 * (t2 * yb - 2 * yc) - t1 * (t2 * (t2 * ya - 2 * yb) + yc) + yd) / 8 - fy0
+        fx1 = (
+            t1 * (t1 * xb - 2 * xc) - t2 * (t1 * (t1 * xa - 2 * xb) + xc) + xd
+        ) / 8 - fx0
+        fy1 = (
+            t1 * (t1 * yb - 2 * yc) - t2 * (t1 * (t1 * ya - 2 * yb) + yc) + yd
+        ) / 8 - fy0
+        fx2 = (
+            t2 * (t2 * xb - 2 * xc) - t1 * (t2 * (t2 * xa - 2 * xb) + xc) + xd
+        ) / 8 - fx0
+        fy2 = (
+            t2 * (t2 * yb - 2 * yc) - t1 * (t2 * (t2 * ya - 2 * yb) + yc) + yd
+        ) / 8 - fy0
         fx3 = (t2 * (t2 * (3 * xb - t2 * xa) - 3 * xc) + xd) / 8
         fx0 -= fx3
         fy3 = (t2 * (t2 * (3 * yb - t2 * ya) - 3 * yc) + yd) / 8
@@ -446,7 +476,9 @@ def plot_cubic_bezier(x0, y0, x1, y1, x2, y2, x3, y3):
             fy2 *= fy0
         if x0 != x3 or y0 != y3:  # /* segment t1 - t2 */
             # plotCubicBezierSeg(x0,y0, x0+fx1,y0+fy1, x0+fx2,y0+fy2, x3,y3)
-            yield from plot_cubic_bezier_seg(x0, y0, x0 + fx1, y0 + fy1, x0 + fx2, y0 + fy2, x3, y3)
+            yield from plot_cubic_bezier_seg(
+                x0, y0, x0 + fx1, y0 + fy1, x0 + fx2, y0 + fy2, x3, y3
+            )
         x0 = x3
         y0 = y3
         fx0 = fx3
@@ -454,51 +486,51 @@ def plot_cubic_bezier(x0, y0, x1, y1, x2, y2, x3, y3):
         t1 = t2
 
 
-def draw_line_aa(x0, y0, x1, y1):
-    dx = abs(x1-x0)
+def plot_line_aa(x0, y0, x1, y1):
+    dx = abs(x1 - x0)
     sx = 1 if x0 < x1 else -1
-    dy = abs(y1-y0)
+    dy = abs(y1 - y0)
     sy = 1 if y0 < y1 else -1
-    err = dx-dy
+    err = dx - dy
     ed = 1 if dx + dy == 0 else abs(complex(dx, dy))
 
-    while True:                                         #/* pixel loop */
-        yield x0, y0, 255*abs(err-dx+dy)/ed
+    while True:  # /* pixel loop */
+        yield x0, y0, 255 * abs(err - dx + dy) / ed
         e2 = err
         x2 = x0
-        if 2*e2 >= -dx:                                    #/* x step */
+        if 2 * e2 >= -dx:  # /* x step */
             if x0 == x1:
                 break
-            if e2+dy < ed:
-                yield x0, y0+sy, 255*(e2+dy)/ed
+            if e2 + dy < ed:
+                yield x0, y0 + sy, 255 * (e2 + dy) / ed
             err -= dy
             x0 += sx
-        if 2*e2 <= dy:                                     #/* y step */
+        if 2 * e2 <= dy:  # /* y step */
             if y0 == y1:
                 break
-            if dx-e2 < ed:
-                yield x2+sx, y0, 255*(dx-e2)/ed
+            if dx - e2 < ed:
+                yield x2 + sx, y0, 255 * (dx - e2) / ed
             err += dx
             y0 += sy
 
 
 def plot_line_width(x0: int, y0: int, x1: int, y1: int, wd: float):
-    dx = abs(x1-x0)
+    dx = abs(x1 - x0)
     sx = 1 if x0 < x1 else -1
-    dy = abs(y1-y0)
+    dy = abs(y1 - y0)
     sy = 1 if y0 < y1 else -1
-    err = dx - dy                          #/* error value e_xy */
-    ed = 1 if dx+dy == 0 else abs(complex(dx, dy))
+    err = dx - dy  # /* error value e_xy */
+    ed = 1 if dx + dy == 0 else abs(complex(dx, dy))
     wd = (wd + 1) / 2
-    while True:                                   #/* pixel loop */
-        yield x0, y0, max(0, int(255*(abs(err-dx+dy)/ed-wd+1)))
+    while True:  # /* pixel loop */
+        yield x0, y0, max(0, int(255 * (abs(err - dx + dy) / ed - wd + 1)))
         e2 = err
         x2 = x0
-        if 2*e2 >= -dx:                                           #/* x step */
+        if 2 * e2 >= -dx:  # /* x step */
             e2 += dy
             y2 = y0
-            while e2 < ed*wd and (y1 != y2 or dx > dy):
-                yield x0, y2, max(0, int(255*(abs(e2)/ed-wd+1)))
+            while e2 < ed * wd and (y1 != y2 or dx > dy):
+                yield x0, y2, max(0, int(255 * (abs(e2) / ed - wd + 1)))
                 y2 += sy
                 e2 += dx
             if x0 == x1:
@@ -506,10 +538,10 @@ def plot_line_width(x0: int, y0: int, x1: int, y1: int, wd: float):
             e2 = err
             err -= dy
             x0 += sx
-        if 2*e2 <= dy:                                            #/* y step */
+        if 2 * e2 <= dy:  # /* y step */
             e2 = dx - e2
             while e2 < ed * wd and (x1 != x2 or dx < dy):
-                yield x2, y0, max(0, int(255*(abs(e2)/ed-wd+1)))
+                yield x2, y0, max(0, int(255 * (abs(e2) / ed - wd + 1)))
                 x2 += sx
                 e2 += dy
             if y0 == y1:
